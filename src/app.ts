@@ -3,6 +3,8 @@ import * as cors from 'cors';
 import * as express from 'express';
 import * as morgan from 'morgan';
 import { Logger, LogLevel } from './utils/winston_log';
+import { errorHandler } from './middlewares/errorHandler';
+import { sendBaseError } from './utils/response';
 
 const app = express();
 
@@ -30,5 +32,11 @@ app.get('/', function (req, res) {
     message: 'Application API Working Successfully  - 👋🌎🌍🌏',
   });
 });
+
+app.all('*', async (req, res) => {
+  return sendBaseError(res, ['Api Route Not Found!'], 'Not Found', 404);
+});
+
+app.use(errorHandler);
 
 export { app };

@@ -4,6 +4,7 @@ import { ValidationError } from 'joi';
 import { MulterError } from 'multer';
 import { DatabaseError } from 'pg';
 import { LogLevel, Logger } from '../utils/winston_log';
+import { sendBaseError } from '../utils/response';
 
 export const errorHandler = (
   err: Error,
@@ -18,28 +19,34 @@ export const errorHandler = (
   });
 
   if (err instanceof ValidationError) {
-    return res.status(422).send({ errors: err.details });
+    return sendBaseError(
+      res,
+      err.details.map((d) => d.message),
+      'Validation Error',
+      422
+    );
   }
 
   if (err instanceof MulterError) {
     if (err.code === 'LIMIT_FILE_SIZE') {
-      return res
-        .status(400)
-        .json({ errors: [{ message: 'File size exceeds 100KB limit.' }] });
+      return sendBaseError(
+        res,
+        ['File size exceeds 100KB limit.'],
+        'File Upload Error',
+        400
+      );
     }
-    return res.status(422).send({ errors: [{ message: err.message }] });
+    return sendBaseError(res, [err.message], 'File Upload Error', 400);
   }
 
   if (err instanceof DatabaseError) {
     const customError = err.detail ? err.detail : err.message;
-    return res.status(500).send({ errors: [{ message: customError }] });
+    return sendBaseError(res, [customError], 'Database Error', 500);
   }
 
   if (err instanceof DrizzleError) {
-    return res.status(500).send({ errors: [{ message: err.message }] });
+    return sendBaseError(res, [err.message], 'Database Error', 500);
   }
 
-  return res.status(500).send({
-    errors: [{ message: 'Something went wrong', unknownError: err }],
-  });
+  return sendBaseError(res, [err.message], 'Internal Server Error', 500);
 };
