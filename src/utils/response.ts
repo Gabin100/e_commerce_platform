@@ -1,4 +1,5 @@
 import { Response } from 'express';
+import { Logger, LogLevel } from './winston_log';
 
 /**
  * Interface for a base API response.
@@ -56,7 +57,8 @@ export const sendBaseError = (
   res: Response,
   errors: string[],
   message: string = 'An error occurred',
-  statusCode: number = 500
+  statusCode: number = 500,
+  label: string = 'GENERAL'
 ): void => {
   const response: BaseResponse<null> = {
     success: false,
@@ -64,6 +66,11 @@ export const sendBaseError = (
     object: null,
     errors,
   };
+  Logger({
+    level: LogLevel.ERROR,
+    message: message + ' | ' + errors.join('; '),
+    label: label,
+  });
   res.status(statusCode).json(response);
 };
 
