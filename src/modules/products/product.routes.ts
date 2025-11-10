@@ -1,8 +1,14 @@
 // src/modules/products/product.routes.ts
 
 import { Router } from 'express';
-import { createProductController } from './product.controller';
-import { validateCreateProduct } from './product.validation';
+import {
+  createProductController,
+  updateProductController,
+} from './product.controller';
+import {
+  validateCreateProduct,
+  validateUpdateProduct,
+} from './product.validation';
 import { authenticate, authorizeRole } from '../../middlewares/auth.middleware';
 
 const productRouter = Router();
@@ -19,6 +25,17 @@ productRouter.post(
   authorizeRole('admin'),
   validateCreateProduct,
   createProductController
+);
+
+// Endpoint: PUT /products/:id
+// Authorization: Must be an 'admin'
+// Validation: Uses the optional update schema
+productRouter.put(
+  '/:id',
+  authenticate,
+  authorizeRole('admin'),
+  validateUpdateProduct,
+  updateProductController
 );
 
 export default productRouter;
