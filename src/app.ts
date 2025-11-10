@@ -5,6 +5,7 @@ import * as morgan from 'morgan';
 import { Logger, LogLevel } from './utils/winston_log';
 import { errorHandler } from './middlewares/errorHandler';
 import { sendBaseError } from './utils/response';
+import { applicationRouters } from './modules';
 
 const app = express();
 
@@ -27,11 +28,7 @@ app.use(
   })
 );
 
-app.get('/', function (req, res) {
-  res.json({
-    message: 'Application API Working Successfully  - 👋🌎🌍🌏',
-  });
-});
+app.use('/', applicationRouters);
 
 app.all(/.*/, async (req, res) => {
   return sendBaseError(res, ['Api Route Not Found!'], 'Not Found', 404);
