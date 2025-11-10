@@ -6,6 +6,14 @@ import * as Joi from 'joi';
 config();
 expand(config());
 
+// Custom Joi extension for string to boolean conversion
+const stringBoolean = Joi.string()
+  .valid('true', 'false')
+  .default('false')
+  .custom((value, helpers) => {
+    return value === 'true';
+  });
+
 // Define environment variable schema with clear and concise descriptions
 const EnvSchema = Joi.object({
   NODE_ENV: Joi.string()
@@ -21,6 +29,8 @@ const EnvSchema = Joi.object({
     .required()
     .description('Secret key for cryptography'),
   DATABASE_URL: Joi.string().required().description('Database connection URL'),
+  DB_MIGRATING: stringBoolean.description('Whether to run database migrations'),
+  DB_SEEDING: stringBoolean.description('Whether to seed the database'),
 }).options({ allowUnknown: true });
 
 // Validate environment variables and handle errors
@@ -34,6 +44,8 @@ const { error, value: envVars } = EnvSchema.validate(process.env, {
     JWT_ISSUER: string;
     CRYPTO_SECRET_KEY: string;
     DATABASE_URL: string;
+    DB_MIGRATING: boolean;
+    DB_SEEDING: boolean;
   };
   error?: Joi.ValidationError;
 };
