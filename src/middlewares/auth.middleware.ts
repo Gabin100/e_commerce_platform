@@ -42,7 +42,7 @@ export const authenticate = (
     req.user = payload; // Attach user payload
     next();
   } catch (ex) {
-    return res.status(401).json({ status: 'error', message: 'Invalid token.' });
+    return sendBaseError(res, [], 'Invalid token.', 401);
   }
 };
 
@@ -53,18 +53,17 @@ export const authenticate = (
 export const authorizeRole = (requiredRole: string) => {
   return (req: AuthRequest, res: Response, next: NextFunction) => {
     if (!req.user) {
-      // This should ideally not happen if 'authenticate' runs first, but is a safeguard.
-      return res
-        .status(401)
-        .json({ status: 'error', message: 'Authentication required.' });
+      return sendBaseError(res, [], 'Authentication required.', 401);
     }
 
     // Check if the user's role matches the required role
     if (req.user.role !== requiredRole) {
-      return res.status(403).json({
-        status: 'error',
-        message: `Forbidden. Only users with the '${requiredRole}' role can access this resource.`,
-      });
+      return sendBaseError(
+        res,
+        [],
+        `Forbidden. Only users with the '${requiredRole}' role can access this resource.`,
+        403
+      );
     }
     next();
   };
