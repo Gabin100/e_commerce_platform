@@ -46,3 +46,37 @@ export async function registerController(req: Request, res: Response) {
     );
   }
 }
+
+export async function loginController(req: Request, res: Response) {
+  const { email, password } = req.body;
+
+  try {
+    // Attempt to authenticate and get the JWT token
+    const token = await authService.authenticateUserAndGenerateToken(
+      email,
+      password
+    );
+
+    if (!token) {
+      // 401 Unauthorized for invalid credentials
+      return sendBaseError(
+        res,
+        ['Invalid email or password.'],
+        'Invalid credentials.',
+        401,
+        'AUTH_CONTROLLER_LOGIN'
+      );
+    }
+
+    // 200 OK success response with the JWT
+    return sendBaseSuccess(res, { token }, 'Login successful.', 200);
+  } catch (error) {
+    return sendBaseError(
+      res,
+      [`${(error as Error).message}`],
+      'An internal server error occurred during login.',
+      500,
+      'AUTH_CONTROLLER_LOGIN'
+    );
+  }
+}
