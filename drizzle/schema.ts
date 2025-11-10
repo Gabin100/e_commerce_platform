@@ -7,7 +7,7 @@ import {
   integer,
   timestamp,
 } from 'drizzle-orm/pg-core';
-import { relations } from 'drizzle-orm';
+import { relations, InferInsertModel, InferSelectModel } from 'drizzle-orm';
 
 export const users = pgTable('users', {
   id: uuid('id').defaultRandom().primaryKey(),
@@ -41,7 +41,7 @@ export const orders = pgTable('orders', {
   createdAt: timestamp('created_at').defaultNow(),
 });
 
-// Relations (optional, for querying with Drizzle)
+// Relations
 export const usersRelations = relations(users, ({ many }) => ({
   products: many(products),
   orders: many(orders),
@@ -60,3 +60,7 @@ export const ordersRelations = relations(orders, ({ one, many }) => ({
     references: [users.id],
   }),
 }));
+
+// Types
+export type User = InferSelectModel<typeof users>;
+export type NewUser = InferInsertModel<typeof users>;
