@@ -50,3 +50,32 @@ export const validateRegister = (
   }
   next();
 };
+
+export const loginSchema = Joi.object({
+  email: Joi.string().email().required().messages({
+    'string.email': 'Email must be a valid email address.',
+    'any.required': 'Email is required.',
+  }),
+
+  password: Joi.string().required().messages({
+    'any.required': 'Password is required.',
+  }),
+});
+
+// Middleware to use in routes
+export const validateLogin = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { error } = loginSchema.validate(req.body);
+  if (error) {
+    return sendBaseError(
+      res,
+      error.details.map((d) => d.message),
+      'Validation Error',
+      422
+    );
+  }
+  next();
+};
