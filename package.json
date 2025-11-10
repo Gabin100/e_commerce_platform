@@ -1,0 +1,33 @@
+{
+  "name": "e_commerce_platform",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "ts-node --max-old-space-size=5120 src/index.ts",
+    "dev": "ts-node-dev --transpile-only --no-notify --max-old-space-size=5120 src",
+    "build": "npx tsc",
+    "server": "node dist/index.js",
+    "db:generate": "drizzle-kit generate --name init_db",
+    "db:migrate": "cross-env DB_MIGRATING=true ts-node drizzle/migrate.ts",
+    "db:seed": "cross-env DB_SEEDING=true ts-node drizzle/seed.ts",
+    "db:studio": "npx drizzle-kit studio",
+    "db:drop": "drizzle-kit drop"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@types/node": "^24.10.0",
+    "drizzle-kit": "^0.31.6",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "dotenv": "^17.2.3",
+    "dotenv-expand": "^12.0.3",
+    "drizzle-orm": "^0.44.7",
+    "joi": "^18.0.1",
+    "postgres": "^3.4.7"
+  }
+}
