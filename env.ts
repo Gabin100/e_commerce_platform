@@ -16,10 +16,6 @@ const EnvSchema = Joi.object({
     .required()
     .description('Port number for the server'),
   JWT_SECRET_KEY: Joi.string().required().description('Secret key for JWT'),
-  JWT_ISSUER: Joi.string().required().description('JWT issuer'),
-  CRYPTO_SECRET_KEY: Joi.string()
-    .required()
-    .description('Secret key for cryptography'),
   DATABASE_URL: Joi.string().required().description('Database connection URL'),
 }).options({ allowUnknown: true });
 
@@ -31,8 +27,6 @@ const { error, value: envVars } = EnvSchema.validate(process.env, {
     NODE_ENV: string;
     PORT: number;
     JWT_SECRET_KEY: string;
-    JWT_ISSUER: string;
-    CRYPTO_SECRET_KEY: string;
     DATABASE_URL: string;
   };
   error?: Joi.ValidationError;
