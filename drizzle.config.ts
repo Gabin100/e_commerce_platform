@@ -1,5 +1,5 @@
 import { defineConfig } from 'drizzle-kit';
-import envVars from './src/env';
+import envVars from './env';
 
 const dbUrl = envVars.DATABASE_URL;
 

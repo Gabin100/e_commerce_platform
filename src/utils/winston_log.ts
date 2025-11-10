@@ -1,6 +1,6 @@
 import * as Winston from 'winston';
 import 'winston-daily-rotate-file';
-import envVars from '../env';
+import envVars from '../../env';
 
 export enum LogLevel {
   ERROR = 'error',

@@ -1,5 +1,5 @@
 import { app } from './app';
-import envVars from './env';
+import envVars from '../env';
 import { LogLevel, Logger } from './utils/winston_log';
 
 const start = async () => {
