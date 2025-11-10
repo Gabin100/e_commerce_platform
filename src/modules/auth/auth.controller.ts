@@ -3,7 +3,7 @@ import * as authService from './auth.service';
 import { sendBaseError, sendBaseSuccess } from '../../utils/response';
 
 export async function registerController(req: Request, res: Response) {
-  const { username, email, password } = req.body;
+  const { username, email, password, role } = req.body;
 
   try {
     // 1. Check for uniqueness (DB level check)
@@ -23,6 +23,7 @@ export async function registerController(req: Request, res: Response) {
       username,
       email,
       password,
+      role,
     });
 
     // 3. Success Response: 201 Created
