@@ -6,12 +6,14 @@ import { products, NewProduct, Product } from '../../../drizzle/schema';
  * @returns {Product} The newly created product record.
  */
 export async function createProduct(
+  userId: string,
   productData: Omit<NewProduct, 'id' | 'createdAt'>
 ): Promise<Product | undefined> {
   const [newProduct] = await db
     .insert(products)
     .values({
       ...productData,
+      userId: userId,
       // Ensure numeric fields are converted/handled correctly for Drizzle insertion
       price: productData.price.toString(),
       stock: productData.stock,
