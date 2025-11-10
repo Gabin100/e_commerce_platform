@@ -39,6 +39,7 @@ export async function checkUniqueness(
 export async function registerUser(data: {
   username: string;
   email: string;
+  role: string;
   password: string;
 }): Promise<Omit<User, 'password'>> {
   // 1. Hash the password
@@ -47,6 +48,7 @@ export async function registerUser(data: {
   const newUser: NewUser = {
     username: data.username,
     email: data.email,
+    role: data.role,
     password: passwordHash,
   };
 
@@ -102,7 +104,7 @@ export async function authenticateUserAndGenerateToken(
     userId: user.id,
     username: user.username,
     email: user.email,
-    role: 'user', // Assuming a default role;
+    role: user.role,
   };
 
   const token = jwt.sign(payload, envVars.JWT_SECRET_KEY, { expiresIn: '1d' }); // Token expires in 1 day

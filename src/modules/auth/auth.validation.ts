@@ -26,6 +26,10 @@ export const registerSchema = Joi.object({
     'any.required': 'Email is required.',
   }),
 
+  role: Joi.string().default('user').required().messages({
+    'any.required': 'Role is required.',
+  }),
+
   password: Joi.string().required().pattern(strongPassword).messages({
     'string.pattern.base':
       'Password must be at least 8 characters long and include one uppercase letter, one lowercase letter, one number, and one special character.',
