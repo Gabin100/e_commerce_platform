@@ -11,7 +11,10 @@ const EnvSchema = Joi.object({
   NODE_ENV: Joi.string()
     .default('development')
     .description('Application environment (development, production, etc.)'),
-  PORT: Joi.number().required().description('Port number for the server'),
+  PORT: Joi.number()
+    .default(4000)
+    .required()
+    .description('Port number for the server'),
   JWT_SECRET_KEY: Joi.string().required().description('Secret key for JWT'),
   JWT_ISSUER: Joi.string().required().description('JWT issuer'),
   CRYPTO_SECRET_KEY: Joi.string()
