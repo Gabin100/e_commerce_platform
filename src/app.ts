@@ -33,7 +33,7 @@ app.get('/', function (req, res) {
   });
 });
 
-app.all('*', async (req, res) => {
+app.all(/.*/, async (req, res) => {
   return sendBaseError(res, ['Api Route Not Found!'], 'Not Found', 404);
 });
 
