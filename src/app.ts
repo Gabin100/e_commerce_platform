@@ -25,4 +25,10 @@ app.use(
   })
 );
 
+app.get('/', function (req, res) {
+  res.json({
+    message: 'Application API Working Successfully  - 👋🌎🌍🌏',
+  });
+});
+
 export { app };
