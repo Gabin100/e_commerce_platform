@@ -9,8 +9,8 @@
     "build": "npx tsc",
     "server": "node dist/index.js",
     "db:generate": "drizzle-kit generate --name init_db",
-    "db:migrate": "cross-env DB_MIGRATING=true ts-node drizzle/migrate.ts",
-    "db:seed": "cross-env DB_SEEDING=true ts-node drizzle/seed.ts",
+    "db:migrate": "cross-env DB_MIGRATING=true ts-node src/drizzle/migrate.ts",
+    "db:seed": "cross-env DB_SEEDING=true ts-node src/drizzle/seed.ts",
     "db:studio": "npx drizzle-kit studio",
     "db:drop": "drizzle-kit drop"
   },
