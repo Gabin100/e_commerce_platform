@@ -64,3 +64,6 @@ export const ordersRelations = relations(orders, ({ one, many }) => ({
 // Types
 export type User = InferSelectModel<typeof users>;
 export type NewUser = InferInsertModel<typeof users>;
+
+export type Product = InferSelectModel<typeof products>;
+export type NewProduct = InferInsertModel<typeof products>;
