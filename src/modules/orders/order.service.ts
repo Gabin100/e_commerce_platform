@@ -16,7 +16,7 @@ interface ItemRequest {
 }
 
 // Custom error for controlled rollback/response
-class StockError extends Error {
+export class StockError extends Error {
   constructor(message: string, public statusCode: number = 400) {
     super(message);
     this.name = 'StockError';
