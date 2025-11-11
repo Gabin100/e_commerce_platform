@@ -2,7 +2,7 @@
 
 import { Request, Response } from 'express';
 import * as productService from './product.service';
-import { NewProduct } from '../../../drizzle/schema';
+import { NewProduct, Product } from '../../../drizzle/schema';
 import {
   sendBaseError,
   sendBaseSuccess,
@@ -212,6 +212,82 @@ export async function deleteProductController(req: AuthRequest, res: Response) {
       'An internal server error occurred while deleting the product.',
       500,
       'DELETE_PRODUCT_ERROR'
+    );
+  }
+}
+
+export async function uploadProductImageController(
+  req: AuthRequest,
+  res: Response
+) {
+  const productId = req.params.id?.trim();
+
+  // Handle file validation errors from Multer middleware
+  if (req.fileValidationError) {
+    return sendBaseError(
+      res,
+      [req.fileValidationError],
+      'Invalid file upload.',
+      400,
+      'INVALID_FILE_UPLOAD'
+    );
+  }
+
+  if (!req.file) {
+    return sendBaseError(
+      res,
+      ['file not found.'],
+      'No file uploaded. Please attach an image file.',
+      400,
+      'INVALID_FILE_UPLOAD'
+    );
+  }
+
+  if (!productId || typeof productId !== 'string') {
+    return sendBaseError(
+      res,
+      ['Product ID is required and must be a string.'],
+      'Invalid product ID format.',
+      400,
+      'INVALID_PRODUCT_ID'
+    );
+  }
+
+  // Construct the image URL/path to be saved in the database
+  const relativeImagePath = `/uploads/product_images/${req.file.filename}`;
+
+  try {
+    // Update the product record with the new image path/URL
+    const updatedProduct: Product | null = await productService.updateProduct(
+      productId,
+      {
+        imageUrl: relativeImagePath,
+      }
+    );
+
+    if (!updatedProduct) {
+      return sendBaseError(
+        res,
+        [`Product with ID ${productId} not found.`],
+        'Product not found.',
+        404,
+        'PRODUCT_NOT_FOUND'
+      );
+    }
+
+    return sendBaseSuccess(
+      res,
+      updatedProduct,
+      'Product image uploaded successfully.',
+      200
+    );
+  } catch (error) {
+    return sendBaseError(
+      res,
+      [`${(error as Error).message}`],
+      'An internal server error occurred while linking the image.',
+      500,
+      'UPLOAD_PRODUCT_IMAGE_ERROR'
     );
   }
 }

@@ -8,4 +8,5 @@ import { Request } from 'express';
 
 export interface AuthRequest extends Request {
   user?: UserPayload;
+  fileValidationError?: string;
 }

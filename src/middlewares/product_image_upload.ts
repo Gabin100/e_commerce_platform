@@ -1,21 +1,13 @@
 import * as multer from 'multer';
 import * as path from 'path';
-
-// Define the directory where uploaded images will be stored
-const UPLOAD_DIR = path.join(
-  __dirname,
-  '..',
-  '..',
-  '..',
-  'uploads',
-  'product_images'
-);
+import * as fs from 'fs';
 
 // Configure storage destination and filename
+const dirPath = './uploads/product_images/';
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    // Ensure the directory exists (in a real app, you'd use fs.mkdirSync)
-    cb(null, UPLOAD_DIR);
+    fs.mkdirSync(dirPath, { recursive: true });
+    cb(null, dirPath);
   },
   filename: (req, file, cb) => {
     // Create a unique filename: productId-timestamp.extension
@@ -41,7 +33,7 @@ const upload = multer({
   storage: storage,
   fileFilter: fileFilter,
   limits: {
-    fileSize: 5 * 1024 * 1024, // 5 MB file size limit
+    fileSize: 1 * 1024 * 1024, // 1 MB file size limit
     files: 1, // Only allow one file per request
   },
 });

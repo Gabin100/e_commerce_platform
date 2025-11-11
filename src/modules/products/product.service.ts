@@ -33,6 +33,7 @@ interface UpdateProductData {
   price?: number;
   stock?: number;
   category?: string;
+  imageUrl?: string;
 }
 
 /**

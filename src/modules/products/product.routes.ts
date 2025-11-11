@@ -7,6 +7,7 @@ import {
   getProductDetailsController,
   getProductsController,
   updateProductController,
+  uploadProductImageController,
 } from './product.controller';
 import {
   validateCreateProduct,
@@ -14,6 +15,7 @@ import {
   validateUpdateProduct,
 } from './product.validation';
 import { authenticate, authorizeRole } from '../../middlewares/auth.middleware';
+import { uploadProductImage } from '../../middlewares/product_image_upload';
 
 const productRouter = Router();
 
@@ -63,6 +65,19 @@ productRouter.delete(
   authorizeRole('admin'),
   validateProductIdParam,
   deleteProductController
+);
+
+// New Endpoint: POST /products/:id/upload-image
+// authenticate (401)
+// authorizeRole('admin') (403)
+// uploadProductImage (Multer handles parsing and saving file to disk)
+productRouter.post(
+  '/:id/upload-image',
+  validateProductIdParam,
+  authenticate,
+  authorizeRole('admin'),
+  uploadProductImage,
+  uploadProductImageController
 );
 
 export default productRouter;
