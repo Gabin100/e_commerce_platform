@@ -4,11 +4,14 @@ import db from '../../../drizzle/db';
 import { NewUser, User, users } from '../../../drizzle/schema';
 import { eq, or } from 'drizzle-orm';
 import envVars from '../../../env';
+import { create } from 'domain';
 
 const SALT_ROUNDS = 10;
 
 /**
  * Checks if a username or email already exists in the database.
+ * @param username The username to check.
+ * @param email The email to check.
  * @returns {string | null} An error message if a conflict is found, otherwise null.
  */
 export async function checkUniqueness(
@@ -34,6 +37,7 @@ export async function checkUniqueness(
 
 /**
  * Hashes the password and saves the new user to the database.
+ * @param data The user registration data.
  * @returns {Omit<User, 'password'>} The created user object without the password hash.
  */
 export async function registerUser(data: {
@@ -42,7 +46,7 @@ export async function registerUser(data: {
   role: string;
   password: string;
 }): Promise<Omit<User, 'password'>> {
-  // 1. Hash the password
+  // Hash the password
   const passwordHash = await bcrypt.hash(data.password, SALT_ROUNDS);
 
   const newUser: NewUser = {
@@ -52,16 +56,20 @@ export async function registerUser(data: {
     password: passwordHash,
   };
 
-  // 2. Insert into the database
-  const [createdUser] = await db.insert(users).values(newUser).returning();
+  // Insert into the database
+  const [createdUser] = await db.insert(users).values(newUser).returning({
+    id: users.id,
+    username: users.username,
+    email: users.email,
+    role: users.role,
+    createdAt: users.createdAt,
+  });
 
   if (!createdUser) {
     throw new Error('User registration failed.');
   }
 
-  // 3. Return the user, excluding the sensitive passwordHash
-  const { password: _, ...safeUser } = createdUser;
-  return safeUser;
+  return createdUser;
 }
 
 interface JWTPayload {
@@ -73,13 +81,15 @@ interface JWTPayload {
 
 /**
  * Authenticates a user and generates a JWT upon success.
+ * @param email The user's email.
+ * @param password The user's password.
  * @returns {string | null} The generated JWT token, or null if authentication fails.
  */
 export async function authenticateUserAndGenerateToken(
   email: string,
   password: string
 ): Promise<string | null> {
-  // 1. Find user by email
+  // Find user by email
   const [user] = await db
     .select()
     .from(users)
@@ -91,7 +101,7 @@ export async function authenticateUserAndGenerateToken(
     return null;
   }
 
-  // 2. Compare the submitted password with the stored hash
+  // Compare the submitted password with the stored hash
   const isMatch = await bcrypt.compare(password, user.password);
 
   if (!isMatch) {
@@ -99,7 +109,7 @@ export async function authenticateUserAndGenerateToken(
     return null;
   }
 
-  // 3. Successful authentication: Generate JWT
+  // Successful authentication: Generate JWT
   const payload: JWTPayload = {
     userId: user.id,
     username: user.username,

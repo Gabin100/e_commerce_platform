@@ -6,7 +6,7 @@ export async function registerController(req: Request, res: Response) {
   const { username, email, password, role } = req.body;
 
   try {
-    // 1. Check for uniqueness (DB level check)
+    // Check for uniqueness of username and email
     const uniquenessError = await authService.checkUniqueness(username, email);
     if (uniquenessError) {
       return sendBaseError(
@@ -18,22 +18,17 @@ export async function registerController(req: Request, res: Response) {
       );
     }
 
-    // 2. Register the user (hashes password and saves)
-    const safeUser = await authService.registerUser({
+    // Register the user
+    const registeredUser = await authService.registerUser({
       username,
       email,
       password,
       role,
     });
 
-    // 3. Success Response: 201 Created
     return sendBaseSuccess(
       res,
-      {
-        id: safeUser.id,
-        username: safeUser.username,
-        email: safeUser.email,
-      },
+      registeredUser,
       'Registration successful.',
       201
     );
@@ -59,7 +54,6 @@ export async function loginController(req: Request, res: Response) {
     );
 
     if (!token) {
-      // 401 Unauthorized for invalid credentials
       return sendBaseError(
         res,
         ['Invalid email or password.'],
@@ -69,7 +63,6 @@ export async function loginController(req: Request, res: Response) {
       );
     }
 
-    // 200 OK success response with the JWT
     return sendBaseSuccess(res, { token }, 'Login successful.', 200);
   } catch (error) {
     return sendBaseError(
