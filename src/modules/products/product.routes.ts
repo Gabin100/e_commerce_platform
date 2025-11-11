@@ -3,6 +3,7 @@
 import { Router } from 'express';
 import {
   createProductController,
+  deleteProductController,
   getProductDetailsController,
   getProductsController,
   updateProductController,
@@ -47,6 +48,21 @@ productRouter.get('/', getProductsController);
 
 // Endpoint: GET /products/:id
 // Public access - no authentication required
+// Validation: Validates the product ID parameter
 productRouter.get('/:id', validateProductIdParam, getProductDetailsController);
+
+// Endpoint: DELETE /products/:id
+// Steps:
+// authenticate: Checks for a valid JWT (401 Unauthorized)
+// authorizeRole('admin'): Checks for 'Admin' role in payload (403 Forbidden)
+// validateProductIdParam: Validates the product ID parameter (400 Bad Request)
+// deleteProductController: Executes deletion logic
+productRouter.delete(
+  '/:id',
+  authenticate,
+  authorizeRole('admin'),
+  validateProductIdParam,
+  deleteProductController
+);
 
 export default productRouter;

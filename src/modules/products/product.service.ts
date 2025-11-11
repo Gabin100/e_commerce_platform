@@ -186,3 +186,17 @@ export async function getProductById(id: string): Promise<Product | null> {
 
   return product || null;
 }
+
+/**
+ * Deletes a product from the database by ID.
+ * @param id The unique identifier of the product.
+ * @returns {number} The number of rows deleted (0 or 1).
+ */
+export async function deleteProduct(id: string): Promise<number> {
+  const [deletedProduct] = await db
+    .delete(products)
+    .where(eq(products.id, id))
+    .returning({ id: products.id });
+
+  return deletedProduct ? 1 : 0;
+}

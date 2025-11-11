@@ -177,3 +177,42 @@ export async function getProductDetailsController(req: Request, res: Response) {
     );
   }
 }
+
+export async function deleteProductController(req: AuthRequest, res: Response) {
+  // 1. Get the product ID from the URL parameters and validate
+  const productId = req.params.id?.trim();
+  if (!productId || typeof productId !== 'string') {
+    return sendBaseError(
+      res,
+      [`Product ID is required and must be a string.`],
+      'Invalid product ID format.',
+      400,
+      'INVALID_PRODUCT_ID'
+    );
+  }
+
+  try {
+    // Attempt to delete the product
+    const rowsDeleted = await productService.deleteProduct(productId);
+
+    if (rowsDeleted === 0) {
+      return sendBaseError(
+        res,
+        [],
+        `Product with ID ${productId} not found.`,
+        404,
+        'PRODUCT_NOT_FOUND'
+      );
+    }
+
+    return sendBaseSuccess(res, {}, `Product deleted successfully.`, 200);
+  } catch (error) {
+    return sendBaseError(
+      res,
+      [`${(error as Error).message}`],
+      'An internal server error occurred while deleting the product.',
+      500,
+      'DELETE_PRODUCT_ERROR'
+    );
+  }
+}
