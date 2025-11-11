@@ -63,6 +63,7 @@ export async function updateProduct(
   // Check if an update actually occurred
   return updatedProduct || null;
 }
+
 interface PaginatedProducts {
   currentPage: number;
   pageSize: number;
@@ -75,7 +76,6 @@ interface PaginatedProducts {
     stock: number;
   }[];
 }
-
 /**
  * Retrieves a list of products with pagination details.
  * @param page The requested page number (1-based).

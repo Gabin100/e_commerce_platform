@@ -3,6 +3,7 @@
 import { Router } from 'express';
 import {
   createProductController,
+  getProductsController,
   updateProductController,
 } from './product.controller';
 import {
@@ -37,5 +38,8 @@ productRouter.put(
   validateUpdateProduct,
   updateProductController
 );
+
+// Endpoint: GET /products
+productRouter.get('/', getProductsController);
 
 export default productRouter;

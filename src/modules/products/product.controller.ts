@@ -1,11 +1,15 @@
 // src/modules/products/product.controller.ts
 
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import * as productService from './product.service';
 import { NewProduct } from '../../../drizzle/schema';
-import { sendBaseError, sendBaseSuccess } from '../../utils/response';
+import {
+  sendBaseError,
+  sendBaseSuccess,
+  sendPaginatedError,
+  sendPaginatedSuccess,
+} from '../../utils/response';
 import { AuthRequest } from '../../types/express';
-import { send } from 'process';
 
 export async function createProductController(req: AuthRequest, res: Response) {
   const productData = req.body as Omit<NewProduct, 'id' | 'createdAt'>;
@@ -39,9 +43,7 @@ export async function createProductController(req: AuthRequest, res: Response) {
   }
 }
 
-// Use AuthRequest to ensure req.user is available, though not strictly needed here
 export async function updateProductController(req: AuthRequest, res: Response) {
-  // Get the product ID from the URL parameters and ensure it's a number
   const productId = req.params?.id;
   if (!productId || typeof productId !== 'string') {
     return sendBaseError(
@@ -56,14 +58,12 @@ export async function updateProductController(req: AuthRequest, res: Response) {
   const updateData = req.body;
 
   try {
-    // Attempt to update the product
     const updatedProduct = await productService.updateProduct(
       productId,
       updateData
     );
 
     if (!updatedProduct) {
-      // 404 Not Found if the service returns null
       return sendBaseError(
         res,
         [`Product with ID ${productId} not found.`],
@@ -73,7 +73,6 @@ export async function updateProductController(req: AuthRequest, res: Response) {
       );
     }
 
-    // Success Response: 200 OK
     return sendBaseSuccess(
       res,
       updatedProduct,
@@ -87,6 +86,47 @@ export async function updateProductController(req: AuthRequest, res: Response) {
       'An internal server error occurred while updating the product.',
       500,
       'UPDATE_PRODUCT_ERROR'
+    );
+  }
+}
+
+export async function getProductsController(req: AuthRequest, res: Response) {
+  // Extract and sanitize query parameters, applying defaults
+  const page = parseInt(req.query.page as string) || 1;
+  // Use 'limit' or 'pageSize' for flexibility
+  const limit =
+    parseInt((req.query.limit as string) || (req.query.pageSize as string)) ||
+    10;
+
+  // Ensure parameters are positive integers
+  const safePage = Math.max(1, page);
+  const safeLimit = Math.max(1, limit);
+
+  try {
+    const paginatedData = await productService.getPaginatedProducts(
+      safePage,
+      safeLimit
+    );
+
+    return sendPaginatedSuccess(
+      res,
+      paginatedData.products,
+      {
+        pageNumber: paginatedData.currentPage,
+        pageSize: paginatedData.pageSize,
+        totalPages: paginatedData.totalPages,
+        totalSize: paginatedData.totalProducts,
+      },
+      'Products retrieved successfully.',
+      200
+    );
+  } catch (error) {
+    return sendPaginatedError(
+      res,
+      [],
+      'An internal server error occurred while retrieving products.',
+      500,
+      'GET_PRODUCTS_ERROR'
     );
   }
 }

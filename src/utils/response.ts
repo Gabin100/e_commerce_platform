@@ -21,6 +21,7 @@ export interface PaginatedResponse<T = any> {
   pageNumber: number;
   pageSize: number;
   totalSize: number;
+  totalPages?: number;
   errors: string[] | null;
 }
 
@@ -89,6 +90,7 @@ export const sendPaginatedSuccess = <T>(
     pageNumber: number;
     pageSize: number;
     totalSize: number;
+    totalPages?: number;
   },
   message: string = 'Data retrieved successfully',
   statusCode: number = 200
@@ -100,6 +102,7 @@ export const sendPaginatedSuccess = <T>(
     pageNumber: pagination.pageNumber,
     pageSize: pagination.pageSize,
     totalSize: pagination.totalSize,
+    totalPages: pagination.totalPages || 0,
     errors: null,
   };
   res.status(statusCode).json(response);
@@ -116,7 +119,8 @@ export const sendPaginatedError = (
   res: Response,
   errors: string[],
   message: string = 'An error occurred',
-  statusCode: number = 500
+  statusCode: number = 500,
+  label: string = 'GENERAL'
 ): void => {
   const response: PaginatedResponse<null> = {
     success: false,
@@ -125,7 +129,13 @@ export const sendPaginatedError = (
     pageNumber: 0,
     pageSize: 0,
     totalSize: 0,
+    totalPages: 0,
     errors,
   };
+  Logger({
+    level: LogLevel.ERROR,
+    message: message + ' | ' + errors.join('; '),
+    label: label,
+  });
   res.status(statusCode).json(response);
 };
