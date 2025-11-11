@@ -1,4 +1,4 @@
-import { eq } from 'drizzle-orm';
+import { count, desc, eq } from 'drizzle-orm';
 import db from '../../../drizzle/db';
 import { products, NewProduct, Product } from '../../../drizzle/schema';
 
@@ -62,4 +62,60 @@ export async function updateProduct(
 
   // Check if an update actually occurred
   return updatedProduct || null;
+}
+interface PaginatedProducts {
+  currentPage: number;
+  pageSize: number;
+  totalPages: number;
+  totalProducts: number;
+  products: {
+    id: string;
+    name: string;
+    price: string;
+    stock: number;
+  }[];
+}
+
+/**
+ * Retrieves a list of products with pagination details.
+ * @param page The requested page number (1-based).
+ * @param limit The number of products per page.
+ * @returns {PaginatedProducts} An object containing the product list and pagination metadata.
+ */
+export async function getPaginatedProducts(
+  page: number,
+  limit: number
+): Promise<PaginatedProducts> {
+  const offset = (page - 1) * limit;
+
+  // Get the total count of all products
+  const [totalCountResult] = await db.select({ count: count() }).from(products);
+  const totalProducts = totalCountResult ? totalCountResult.count : 0;
+
+  // Calculate total pages
+  const totalPages = Math.ceil(totalProducts / limit);
+
+  // Fetch the products for the current page
+  const productList = await db
+    .select()
+    .from(products)
+    .limit(limit)
+    .offset(offset);
+
+  // Filter the output to include only essential information
+  const filteredProductsList = productList.map((p) => ({
+    id: p.id,
+    name: p.name,
+    price: p.price,
+    stock: p.stock,
+    category: p.category,
+  }));
+
+  return {
+    currentPage: page,
+    pageSize: filteredProductsList.length,
+    totalPages: totalPages,
+    totalProducts: totalProducts,
+    products: filteredProductsList,
+  };
 }
