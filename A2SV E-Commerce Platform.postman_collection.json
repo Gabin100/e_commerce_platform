@@ -1,0 +1,410 @@
+{
+	"info": {
+		"_postman_id": "0134951e-0074-4000-8359-3633af9024cf",
+		"name": "A2SV E-Commerce Platform",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "12071044",
+		"_collection_link": "https://recruitmen.postman.co/workspace/My-Workspace~92684c11-e3fa-4799-815f-457658c21e6f/collection/12071044-0134951e-0074-4000-8359-3633af9024cf?action=share&source=collection_link&creator=12071044"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Register User",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"Maly\",\n    \"email\": \"maly@gmail.com\",\n    \"password\": \"Maly123!@#\",\n    \"role\": \"admin\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/auth/register",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"maly@gmail.com\",\n    \"password\": \"Maly123!@#\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/auth/login",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "products",
+			"item": [
+				{
+					"name": "Create New Product",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Shoe Rack\",\n    \"description\": \"Modern shoe rack with 4 layers for neat organization\",\n    \"price\": 500,\n    \"stock\": 30,\n    \"category\": \"furniture\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/products",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"products"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update product",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Chair plus\",\n    \"description\": \"Good chair to seat on everywhere\",\n    \"price\": 600,\n    \"stock\": 30\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/products/:id",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"products",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "ec7573e6-442d-4d0a-bb33-9b850d53bd02"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get paginated Products",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/products?page=1&pageSize=10",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"products"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "pageSize",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search products",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/products?page=1&pageSize=10&search=bed",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"products"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "pageSize",
+									"value": "10"
+								},
+								{
+									"key": "search",
+									"value": "bed"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get products Details",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/products/:id",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"products",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "ec7573e6-442d-4d0a-bb33-9b850d53bd02"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Product",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/products/:id",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"products",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "ec7573e6-442d-4d0a-bb33-9b850d53bd02"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "upload product image",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "multipart/form-data",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "productImage",
+									"type": "file",
+									"src": "/Users/jeangabinishimwe/Pictures/127wallpaper.jpg"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}/products/:id/upload-image",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"products",
+								":id",
+								"upload-image"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "7aadc79f-b707-44f3-8823-1d0faec5cc7a"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Preview product images",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/uploads/product_images/7aadc79f-b707-44f3-8823-1d0faec5cc7a-1762873198066.jpg",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"uploads",
+								"product_images",
+								"7aadc79f-b707-44f3-8823-1d0faec5cc7a-1762873198066.jpg"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Orders",
+			"item": [
+				{
+					"name": "Place new order",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "[\n    {\n        \"productId\": \"3a88ebae-a0cb-4011-b416-274accaae171\",\n        \"quantity\": 6\n    },\n    {\n        \"productId\": \"555bea5e-a0e8-482e-aefc-76d663ab4d96\",\n        \"quantity\": 3\n    },\n    {\n        \"productId\": \"4b09eb00-fd98-48cc-a6fd-2978b68bab55\",\n        \"quantity\": 2\n    }\n]",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/orders",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"orders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get authenticated user order history",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/orders",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"orders"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "API Test",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": "JSON Content"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"used_id\": \"clvut27hw000012w5u8ryylon\",\n    \"otpDeliveryMethod\": \"email\" // email, phone_number\n}"
+				},
+				"url": {
+					"raw": "localhost:4000",
+					"host": [
+						"localhost"
+					],
+					"port": "4000"
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
