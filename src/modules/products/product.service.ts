@@ -1,4 +1,4 @@
-import { count, desc, eq, like } from 'drizzle-orm';
+import { count, desc, eq, ilike } from 'drizzle-orm';
 import db from '../../../drizzle/db';
 import { products, NewProduct, Product } from '../../../drizzle/schema';
 
@@ -133,7 +133,7 @@ export async function searchProducts(
 
   let whereClause = undefined;
   if (search && search.trim() !== '') {
-    whereClause = like(products.name, `%${search.trim()}%`);
+    whereClause = ilike(products.name, `%${search.trim()}%`);
   }
 
   // Get the total count of products matching the criteria
