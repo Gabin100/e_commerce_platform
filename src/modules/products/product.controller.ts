@@ -148,7 +148,6 @@ export async function getProductDetailsController(req: Request, res: Response) {
   }
 
   try {
-    // Call the service to fetch the product
     const product = await productService.getProductById(productId);
 
     if (!product) {
@@ -179,7 +178,7 @@ export async function getProductDetailsController(req: Request, res: Response) {
 }
 
 export async function deleteProductController(req: AuthRequest, res: Response) {
-  // 1. Get the product ID from the URL parameters and validate
+  // Get the product ID from the URL parameters and validate
   const productId = req.params.id?.trim();
   if (!productId || typeof productId !== 'string') {
     return sendBaseError(

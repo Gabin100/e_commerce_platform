@@ -4,6 +4,8 @@ import { products, NewProduct, Product } from '../../../drizzle/schema';
 
 /**
  * Creates a new product record in the database.
+ * @param userId The ID of the user creating the product.
+ * @param productData The data for the new product.
  * @returns {Product} The newly created product record.
  */
 export async function createProduct(
@@ -35,6 +37,8 @@ interface UpdateProductData {
 
 /**
  * Updates an existing product in the database.
+ * @param id The unique identifier of the product to update.
+ * @param productData The fields to update for the product.
  * @returns {Product | null} The updated product record, or null if the product was not found.
  */
 export async function updateProduct(

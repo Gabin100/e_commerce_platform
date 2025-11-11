@@ -125,7 +125,7 @@ export const validateUpdateProduct = (
   next();
 };
 
-// validating uuid param
+// Middleware to validate uuid param
 export const validateProductIdParam = (
   req: Request,
   res: Response,
