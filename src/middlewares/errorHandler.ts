@@ -31,7 +31,7 @@ export const errorHandler = (
     if (err.code === 'LIMIT_FILE_SIZE') {
       return sendBaseError(
         res,
-        ['File size exceeds 100KB limit.'],
+        ['File size exceeds 5MB limit.'],
         'File Upload Error',
         400
       );

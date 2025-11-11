@@ -29,6 +29,7 @@ export const products = pgTable('products', {
   userId: uuid('user_id')
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' }),
+  imageUrl: text('image_url'),
   createdAt: timestamp('created_at').defaultNow(),
 });
 
