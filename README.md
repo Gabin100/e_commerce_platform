@@ -116,9 +116,19 @@ project-root/
    - Set up your environment-specific variables
 
 4. Start the development server:
+
    ```bash
    npm run dev
    ```
+
+5. migrating database tables:
+
+- create database name: e_commerce_platform_db
+- ```bash
+  npm run db:migrate
+  ```
+
+```
 
 ## Logging
 
@@ -145,3 +155,4 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 Gabin100 - GitHub: [@Gabin100](https://github.com/Gabin100)
 
 Project Link: [https://github.com/Gabin100/e_commerce_platform](https://github.com/Gabin100/e_commerce_platform)
+```
