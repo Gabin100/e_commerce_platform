@@ -33,6 +33,7 @@ const limiter = rateLimit({
 // Apply the rate limiter to all requests
 app.use(limiter);
 
+// HTTP request logger middleware
 app.use(
   morgan(`:method :url :status :res[content-length] - :response-time ms`, {
     stream: {
@@ -46,12 +47,15 @@ app.use(
   })
 );
 
+// Serve static files from the 'uploads' directory
+app.use('/uploads', express.static('uploads'));
+// Application Routes
 app.use('/', applicationRouters);
-
+// 404 Handler for undefined routes
 app.all(/.*/, async (req, res) => {
   return sendBaseError(res, ['Api Route Not Found!'], 'Not Found', 404);
 });
-
+// Global Error Handler
 app.use(errorHandler);
 
 export { app };
