@@ -222,17 +222,6 @@ export async function uploadProductImageController(
 ) {
   const productId = req.params.id?.trim();
 
-  // Handle file validation errors from Multer middleware
-  if (req.fileValidationError) {
-    return sendBaseError(
-      res,
-      [req.fileValidationError],
-      'Invalid file upload.',
-      400,
-      'INVALID_FILE_UPLOAD'
-    );
-  }
-
   if (!req.file) {
     return sendBaseError(
       res,
@@ -285,7 +274,7 @@ export async function uploadProductImageController(
     return sendBaseError(
       res,
       [`${(error as Error).message}`],
-      'An internal server error occurred while linking the image.',
+      'An internal server error occurred while uploading the image.',
       500,
       'UPLOAD_PRODUCT_IMAGE_ERROR'
     );

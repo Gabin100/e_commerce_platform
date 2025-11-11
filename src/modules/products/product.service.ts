@@ -52,6 +52,7 @@ export async function updateProduct(
   if (productData.description)
     updatePayload.description = productData.description;
   if (productData.category) updatePayload.category = productData.category;
+  if (productData.imageUrl) updatePayload.imageUrl = productData.imageUrl;
 
   // Convert numeric inputs to string/integer as per Drizzle schema definition
   if (productData.price !== undefined)
