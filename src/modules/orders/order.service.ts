@@ -8,7 +8,7 @@ import {
   OrderItem,
   Order,
 } from '../../../drizzle/schema';
-import { eq, inArray, sql } from 'drizzle-orm';
+import { desc, eq, inArray, sql } from 'drizzle-orm';
 
 interface ItemRequest {
   productId: string;
@@ -127,4 +127,29 @@ export async function placeNewOrder(
   // --- END TRANSACTION: Commit if success, Rollback if error ---
 
   return { ...createdOrder!, items: createdItems };
+}
+
+// Define the summary fields required for the history view
+type OrderSummary = Pick<Order, 'id' | 'totalPrice' | 'status' | 'createdAt'>;
+
+/**
+ * Retrieves a list of summary details for all orders placed by a specific user.
+ * @param userId The ID of the authenticated user.
+ * @returns {OrderSummary[]} An array of order summary objects.
+ */
+export async function getOrderHistoryByUserId(
+  userId: string
+): Promise<OrderSummary[]> {
+  const userOrders = await db
+    .select({
+      id: orders.id,
+      totalPrice: orders.totalPrice,
+      status: orders.status,
+      createdAt: orders.createdAt,
+    })
+    .from(orders)
+    .where(eq(orders.userId, userId))
+    .orderBy(desc(orders.createdAt));
+
+  return userOrders;
 }

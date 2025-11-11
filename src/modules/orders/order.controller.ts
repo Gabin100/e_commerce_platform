@@ -33,3 +33,32 @@ export async function placeOrderController(req: AuthRequest, res: Response) {
     );
   }
 }
+
+export async function getOrderHistoryController(
+  req: AuthRequest,
+  res: Response
+) {
+  const userId = req.user?.userId;
+  if (!userId) {
+    return sendBaseError(res, [], 'User not authenticated.', 401);
+  }
+
+  try {
+    const orderHistory = await orderService.getOrderHistoryByUserId(userId);
+
+    return sendBaseSuccess(
+      res,
+      orderHistory,
+      `Found ${orderHistory.length} orders.`,
+      200
+    );
+  } catch (error) {
+    return sendBaseError(
+      res,
+      [`${(error as Error).message}`],
+      'An internal server error occurred while retrieving your order history.',
+      500,
+      'ORDER_HISTORY_ERROR'
+    );
+  }
+}

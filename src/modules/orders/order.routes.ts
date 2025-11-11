@@ -1,5 +1,8 @@
 import { Router } from 'express';
-import { placeOrderController } from './order.controller';
+import {
+  getOrderHistoryController,
+  placeOrderController,
+} from './order.controller';
 import { validatePlaceOrder } from './order.validation';
 import { authenticate, authorizeRole } from '../../middlewares/auth.middleware';
 
@@ -15,5 +18,9 @@ orderRouter.post(
   validatePlaceOrder,
   placeOrderController
 );
+
+// Endpoint: GET /orders (View My Order History)
+// Requires only authentication.
+orderRouter.get('/', authenticate, getOrderHistoryController);
 
 export default orderRouter;
