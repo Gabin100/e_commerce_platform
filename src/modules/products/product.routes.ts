@@ -39,7 +39,8 @@ productRouter.put(
   updateProductController
 );
 
-// Endpoint: GET /products
+// Endpoint: GET /products?page=&pageSize=
+// Public access - no authentication required
 productRouter.get('/', getProductsController);
 
 export default productRouter;

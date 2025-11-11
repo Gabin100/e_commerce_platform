@@ -1,4 +1,4 @@
-import { count, desc, eq } from 'drizzle-orm';
+import { count, desc, eq, like } from 'drizzle-orm';
 import db from '../../../drizzle/db';
 import { products, NewProduct, Product } from '../../../drizzle/schema';
 
@@ -97,25 +97,77 @@ export async function getPaginatedProducts(
 
   // Fetch the products for the current page
   const productList = await db
-    .select()
+    .select({
+      id: products.id,
+      name: products.name,
+      price: products.price,
+      stock: products.stock,
+      category: products.category,
+    })
     .from(products)
     .limit(limit)
     .offset(offset);
 
-  // Filter the output to include only essential information
-  const filteredProductsList = productList.map((p) => ({
-    id: p.id,
-    name: p.name,
-    price: p.price,
-    stock: p.stock,
-    category: p.category,
-  }));
+  return {
+    currentPage: page,
+    pageSize: productList.length,
+    totalPages: totalPages,
+    totalProducts: totalProducts,
+    products: productList,
+  };
+}
+
+/**
+ * Retrieves a list of products with pagination and search details.
+ * @param page The requested page number (1-based).
+ * @param limit The number of products per page.
+ * @param search Optional search term for product name matching.
+ * @returns {PaginatedProducts} An object containing the product list and pagination metadata.
+ */
+export async function searchProducts(
+  page: number,
+  limit: number,
+  search?: string
+): Promise<PaginatedProducts> {
+  const offset = (page - 1) * limit;
+
+  let whereClause = undefined;
+  if (search && search.trim() !== '') {
+    whereClause = like(products.name, `%${search.trim()}%`);
+  }
+
+  // Get the total count of products matching the criteria
+  const [totalCountResult] = await db
+    .select({ count: count() })
+    .from(products)
+    .where(whereClause);
+
+  const totalProducts = totalCountResult ? totalCountResult.count : 0;
+
+  // Calculate total pages
+  const totalPages = Math.ceil(totalProducts / limit);
+
+  // Fetch the products for the current page
+  const productList = await db
+    .select({
+      id: products.id,
+      name: products.name,
+      price: products.price,
+      stock: products.stock,
+      category: products.category,
+    })
+    .from(products)
+    .where(whereClause)
+    .limit(limit)
+    .offset(offset);
+
+  const essentialProducts = productList;
 
   return {
     currentPage: page,
-    pageSize: filteredProductsList.length,
+    pageSize: essentialProducts.length,
     totalPages: totalPages,
     totalProducts: totalProducts,
-    products: filteredProductsList,
+    products: essentialProducts,
   };
 }
