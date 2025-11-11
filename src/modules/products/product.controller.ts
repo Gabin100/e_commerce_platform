@@ -98,15 +98,18 @@ export async function getProductsController(req: AuthRequest, res: Response) {
     parseInt((req.query.limit as string) || (req.query.pageSize as string)) ||
     10;
 
+  // Extract the search query parameter
+  const search = req.query.search as string | undefined;
+
   // Ensure parameters are positive integers
   const safePage = Math.max(1, page);
   const safeLimit = Math.max(1, limit);
 
   try {
-    const paginatedData = await productService.getPaginatedProducts(
-      safePage,
-      safeLimit
-    );
+    // Fetch paginated products, with optional search
+    const paginatedData = !search
+      ? await productService.getPaginatedProducts(safePage, safeLimit)
+      : await productService.searchProducts(safePage, safeLimit, search);
 
     return sendPaginatedSuccess(
       res,
@@ -123,7 +126,7 @@ export async function getProductsController(req: AuthRequest, res: Response) {
   } catch (error) {
     return sendPaginatedError(
       res,
-      [],
+      [`${(error as Error).message}`],
       'An internal server error occurred while retrieving products.',
       500,
       'GET_PRODUCTS_ERROR'
