@@ -133,3 +133,47 @@ export async function getProductsController(req: AuthRequest, res: Response) {
     );
   }
 }
+
+export async function getProductDetailsController(req: Request, res: Response) {
+  // Get the product ID from the URL parameters and validate
+  const productId = req.params?.id;
+  if (!productId || typeof productId !== 'string') {
+    return sendBaseError(
+      res,
+      [`Product ID is required and must be a string.`],
+      'Invalid product ID format.',
+      400,
+      'INVALID_PRODUCT_ID'
+    );
+  }
+
+  try {
+    // Call the service to fetch the product
+    const product = await productService.getProductById(productId);
+
+    if (!product) {
+      return sendBaseError(
+        res,
+        [],
+        `Product with ID ${productId} not found.`,
+        404,
+        'PRODUCT_NOT_FOUND'
+      );
+    }
+
+    return sendBaseSuccess(
+      res,
+      product,
+      'Product details retrieved successfully.',
+      200
+    );
+  } catch (error) {
+    return sendBaseError(
+      res,
+      [`${(error as Error).message}`],
+      'An internal server error occurred while retrieving product details.',
+      500,
+      'GET_PRODUCT_DETAILS_ERROR'
+    );
+  }
+}

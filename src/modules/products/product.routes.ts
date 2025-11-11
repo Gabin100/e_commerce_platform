@@ -3,11 +3,13 @@
 import { Router } from 'express';
 import {
   createProductController,
+  getProductDetailsController,
   getProductsController,
   updateProductController,
 } from './product.controller';
 import {
   validateCreateProduct,
+  validateProductIdParam,
   validateUpdateProduct,
 } from './product.validation';
 import { authenticate, authorizeRole } from '../../middlewares/auth.middleware';
@@ -39,8 +41,12 @@ productRouter.put(
   updateProductController
 );
 
-// Endpoint: GET /products?page=&pageSize=
+// Endpoint: GET /products?page=&pageSize=&search=
 // Public access - no authentication required
 productRouter.get('/', getProductsController);
+
+// Endpoint: GET /products/:id
+// Public access - no authentication required
+productRouter.get('/:id', validateProductIdParam, getProductDetailsController);
 
 export default productRouter;

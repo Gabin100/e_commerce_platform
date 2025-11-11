@@ -171,3 +171,18 @@ export async function searchProducts(
     products: essentialProducts,
   };
 }
+
+/**
+ * Retrieves the details of a single product by ID.
+ * @param id The unique identifier of the product.
+ * @returns {Product | null} The complete product object, or null if not found.
+ */
+export async function getProductById(id: string): Promise<Product | null> {
+  const [product] = await db
+    .select()
+    .from(products)
+    .where(eq(products.id, id))
+    .limit(1);
+
+  return product || null;
+}

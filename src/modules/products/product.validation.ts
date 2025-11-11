@@ -2,6 +2,7 @@ import * as Joi from 'joi';
 import { Request, Response, NextFunction } from 'express';
 import { sendBaseError } from '../../utils/response';
 
+const baseId = Joi.string().uuid({ version: 'uuidv4' });
 const baseName = Joi.string().min(3).max(100);
 const baseDescription = Joi.string().min(10);
 const basePrice = Joi.number().precision(2).positive().strict();
@@ -59,6 +60,11 @@ export const validateCreateProduct = (
 };
 
 export const updateProductSchema = Joi.object({
+  id: baseId.required().messages({
+    'string.base': 'Product ID must be a string.',
+    'string.uuid': 'Product ID must be a valid UUID v4.',
+    'any.required': 'Product ID is required.',
+  }),
   name: baseName.optional().messages({
     'string.min': 'Name must be at least 3 characters long.',
     'string.max': 'Name cannot exceed 100 characters.',
@@ -93,7 +99,19 @@ export const validateUpdateProduct = (
   res: Response,
   next: NextFunction
 ) => {
-  const { error } = updateProductSchema.validate(req.body, {
+  // validate product id param
+  const productId = req.params.id?.trim();
+  if (!productId) {
+    return sendBaseError(
+      res,
+      ['Product ID parameter is required.'],
+      'Invalid product ID parameter.',
+      400
+    );
+  }
+  const dataToValidate =
+    Object.keys(req.body).length > 0 ? { ...req.body, id: productId } : {};
+  const { error } = updateProductSchema.validate(dataToValidate, {
     abortEarly: false,
   });
   if (error) {
@@ -101,6 +119,29 @@ export const validateUpdateProduct = (
       res,
       error.details.map((detail) => detail.message),
       'Validation failed.',
+      400
+    );
+  }
+  next();
+};
+
+// validating uuid param
+export const validateProductIdParam = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const idSchema = baseId.required().messages({
+    'string.base': 'Product ID must be a string.',
+    'string.uuid': 'Product ID must be a valid UUID v4.',
+    'any.required': 'Product ID is required.',
+  });
+  const { error } = idSchema.validate(req.params.id?.trim());
+  if (error) {
+    return sendBaseError(
+      res,
+      error.details.map((detail) => detail.message),
+      'Invalid product ID parameter.',
       400
     );
   }
