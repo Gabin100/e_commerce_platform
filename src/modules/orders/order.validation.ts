@@ -3,10 +3,10 @@ import { Request, Response, NextFunction } from 'express';
 import { sendBaseError } from '../../utils/response';
 
 const orderItemSchema = Joi.object({
-  productId: Joi.number().integer().positive().required().messages({
-    'number.base': 'productId must be a number.',
-    'number.positive': 'productId must be positive.',
-    'any.required': 'productId is required.',
+  productId: Joi.string().uuid({ version: 'uuidv4' }).required().messages({
+    'string.base': 'Product ID must be a string.',
+    'string.uuid': 'Product ID must be a valid UUID v4.',
+    'any.required': 'Product ID is required.',
   }),
 
   quantity: Joi.number().integer().min(1).required().messages({
