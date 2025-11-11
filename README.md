@@ -1,6 +1,6 @@
 # E-Commerce Platform
 
-A robust e-commerce platform built with Node.js and TypeScript, featuring comprehensive logging capabilities.
+e-commerce platform built with Node.js and TypeScript, featuring comprehensive logging capabilities.
 
 ## Project Overview
 
@@ -8,40 +8,93 @@ This e-commerce platform is designed to provide a scalable and maintainable solu
 
 ## Technologies Used
 
-- Node.js
-- TypeScript
-- Winston (for logging)
+| Category          | Technology                       | Purpose                                                       |
+| :---------------- | :------------------------------- | :------------------------------------------------------------ |
+| **Backend**       | **Node.js, Express.js**          | Core JavaScript runtime and web framework.                    |
+| **Language**      | **TypeScript**                   | Static typing for improved safety and developer experience.   |
+| **Database**      | **PostgreSQL**                   | Robust, open-source relational database.                      |
+| **ORM**           | **Drizzle ORM**                  | Type-safe, modern ORM for PostgreSQL interactions.            |
+| **Validation**    | **Joi**                          | Runtime validation for request schemas.                       |
+| **Security**      | **Bcrypt, JSON Web Token (JWT)** | Password hashing and authentication.                          |
+| **File Handling** | **Multer**                       | Middleware for parsing `multipart/form-data` (image uploads). |
+| **Logging**       | **Winston**                      | Comprehensive, structured logging.                            |
 
 ## Project Structure
 
+The project follows a **Modular (Feature-Based) Architecture** for scalability.
+
 ```
-├── logs/
-│   ├── access/      # Access logs
-│   ├── combined/    # Combined logs
-│   └── error/       # Error logs
+project-root/
+├── logs/                          # Log files (access, combined, error)
+├── drizzle/                       # Local storage for product images (using Multer)
+│   ├── migration/
+│   ├── db.ts
+│   └── schema.ts
+├── uploads/                       # Local storage for product images (using Multer)
 ├── src/
-│   ├── app.ts       # Application setup
-│   ├── env.ts       # Environment configuration
-│   ├── index.ts     # Entry point
-│   └── utils/
-│       └── winston_log.ts  # Logging configuration
-├── package.json     # Project dependencies
-└── tsconfig.json   # TypeScript configuration
+│   ├── modules/                   # Feature-based architecture
+│   │   ├── auth/                  # User registration and login
+│   │   │   ├── auth.controller.ts
+│   │   │   ├── auth.routes.ts
+│   │   │   ├── auth.validation.ts
+│   │   │   └── auth.service.ts
+│   │   ├── products/              # Product CRUD, search, and image upload
+│   │   │   ├── product.controller.ts
+│   │   │   ├── product.routes.ts
+│   │   │   ├── product.validation.ts
+│   │   │   └── product.service.ts
+│   │   └── orders/                # Order placement and history (Transactional)
+│   │       ├── order.controller.ts
+│   │       ├── order.routes.ts
+│   │       ├── order.validation.ts
+│   │       └── order.service.ts
+│   ├── middlewares/               # Auth (JWT), Authorization (Role), error handler, Multer Upload
+│   ├── types/                     # add custom types for authentication
+│   ├── utils/
+│   │   ├── response.ts            # Handling standardized API responses
+│   │   └── winston_log.ts         # Logging configuration
+│   ├── app.ts                     # Express application setup and middleware registration
+│   └── index.ts                   # Application entry point
+├── .env.example
+├── drizzle.config.ts
+├── env.ts
+├── package.json
+└── tsconfig.json
 ```
 
 ## Features
 
-- Structured logging system with separate access, error, and combined logs
-- TypeScript for enhanced type safety and better development experience
-- Environment-based configuration
-- Modular architecture for scalability
+### API Endpoints
+
+| Feature      | Endpoint                     | Method   | Authorization | Description                                                 |
+| :----------- | :--------------------------- | :------- | :------------ | :---------------------------------------------------------- |
+| **Auth**     | `/auth/register`             | `POST`   | Public        | Creates a new user account.                                 |
+| **Auth**     | `/auth/login`                | `POST`   | Public        | Authenticates user and returns a JWT.                       |
+| **Catalog**  | `/products`                  | `GET`    | Public        | Lists all products with optional **pagination and search**. |
+| **Details**  | `/products/:id`              | `GET`    | Public        | Retrieves detailed information for a single product.        |
+| **Admin**    | `/products`                  | `POST`   | Admin         | **Creates** a new product with input validation.            |
+| **Admin**    | `/products/:id`              | `PUT`    | Admin         | **Updates** an existing product.                            |
+| **Admin**    | `/products/:id`              | `DELETE` | Admin         | **Deletes** a product.                                      |
+| **Admin**    | `/products/:id/upload-image` | `POST`   | Admin         | Uploads and links a product image.                          |
+| **Uploads**  | `/uploads`                   | `GET`    | Public        | View uploaded images.                                       |
+| **Ordering** | `/orders`                    | `POST`   | User          | **Places a new order** (uses a database transaction).       |
+| **History**  | `/orders`                    | `GET`    | User          | Views the authenticated user's order history.               |
+
+### Architectural Highlights
+
+- **Transactional Integrity:** Order placement is secured using a PostgreSQL transaction (via Drizzle) to guarantee stock level updates and order creation succeed or fail together.
+- **Role-Based Access Control (RBAC):** Middleware enforces `Admin` status for sensitive endpoints (e.g., product creation, deletion).
+- **Strong Input Validation:** All inputs are validated using Joi schemas to ensure data integrity and security.
+
+---
 
 ## Getting Started
 
 ### Prerequisites
 
-- Node.js (v14 or higher)
+- Node.js (v22 or higher)
 - npm or yarn package manager
+- **PostgreSQL Database** instance
 
 ### Installation
 
