@@ -6,12 +6,14 @@ import orderRouter from './orders/order.routes';
 
 const router = Router();
 
+// Health check endpoint
 router.get('/', (req: Request, res: Response) => {
   res.json({
     message: 'Application API Working Successfully  - 👋🌎🌍🌏',
   });
 });
 
+// Module Routers
 router.use('/auth', authRouter);
 router.use('/products', productRouter);
 router.use('/orders', orderRouter);

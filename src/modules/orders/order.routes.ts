@@ -19,7 +19,7 @@ orderRouter.post(
   placeOrderController
 );
 
-// Endpoint: GET /orders (View My Order History)
+// Endpoint: GET /orders
 // Requires only authentication.
 orderRouter.get('/', authenticate, getOrderHistoryController);
 

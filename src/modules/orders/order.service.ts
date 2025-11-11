@@ -25,6 +25,8 @@ export class StockError extends Error {
 
 /**
  * Places a new order within a transaction, handling stock checks and updates.
+ * @param userId The ID of the authenticated user.
+ * @param items An array of items to order, each with productId and quantity.
  * @returns {Order & { items: OrderItem[] }} The created order and its items.
  */
 export async function placeNewOrder(
